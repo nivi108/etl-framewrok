@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Python (in case notebooks/scripts are added later)
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Env/secrets
+.env
+*.local
