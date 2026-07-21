@@ -95,6 +95,22 @@ These four core tables together form the complete metadata model. A table is onl
 
 ## Example Metadata (Illustrative Only)
 
+### Example 1: Incremental Load (timestamp-based)
+```yaml
+Source_Config:
+  source_system: SQLServer_Prod
+  database_name: SalesDB
+  schema_name: dbo
+  table_name: Customers
+  load_type: Incremental
+  incremental_column: modified_date
+  watermark_column: modified_date
+  cdc_enabled: false
+  primary_keys: [customer_id]
+  active_flag: true
+```
+
+### Example 2: CDC Load (LSN-based, true SQL Server CDC)
 ```yaml
 Source_Config:
   source_system: SQLServer_Prod
@@ -102,11 +118,17 @@ Source_Config:
   schema_name: dbo
   table_name: Orders
   load_type: CDC
-  watermark_column: modified_date
-  cdc_enabled: true
+  incremental_column: null        # not used for CDC — LSN tracking via watermark_registry
+  watermark_column: null           # not used — CDC version/LSN tracked in watermark_registry
+  cdc_enabled: true                # CDC must be enabled at SQL Server side
   primary_keys: [order_id]
   active_flag: true
+```
 
+Note: `load_type: CDC` uses SQL Server's CDC change tables and LSN (Log Sequence Number) tracking via `watermark_registry` — it does NOT use `incremental_column` or `watermark_column`. Those fields are for `load_type: Incremental` only. The two mechanisms are distinct and must not be mixed.
+
+### Example 3: Pipeline, Workflow, Validation Config (applies to either load type)
+```yaml
 Pipeline_Config (Silver row):
   table_name: Orders
   target_layer: Silver

@@ -37,6 +37,7 @@ Covers dimension building, fact building, aggregation, and dependency ordering b
 | 3. Define grain | Grain (one row = what) must be explicitly documented per fact table — e.g., "one row per order line item" |
 | 4. Apply measures | Numeric/business measures carried as-is or computed (e.g., `line_total = quantity * unit_price`) |
 | 5. Merge/append into Gold fact table | Append for immutable event facts; merge if facts can be corrected/updated |
+| 6. Idempotency guard (append mode only) | Before appending, check if rows with the same `_load_id` already exist in the fact table — if yes, skip the write. This prevents duplicate rows on re-run, same pattern as `Raw_Framework.md`'s duplicate prevention for Incremental/CDC loads. |
 
 ## Dimension Key Resolution (Decision Table)
 
